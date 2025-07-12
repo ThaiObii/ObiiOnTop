@@ -6,8 +6,14 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+print("Starting Ninja Legends OP GUI script") -- Debug start
+
 -- Function to display error notifications
 local function showError(message)
+    if not Players or not Players.LocalPlayer then
+        print("Error: No LocalPlayer context - " .. message)
+        return
+    end
     local errorLabel = Instance.new("TextLabel")
     errorLabel.Size = UDim2.new(0, 300, 0, 50)
     errorLabel.Position = UDim2.new(0.5, -150, 0.4, 0)
@@ -18,7 +24,7 @@ local function showError(message)
     errorLabel.TextSize = 14
     errorLabel.Font = Enum.Font.GothamBlack
     errorLabel.TextTransparency = 1
-    errorLabel.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    errorLabel.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = errorLabel
@@ -33,6 +39,7 @@ end
 
 -- Function to show loading indicator
 local function showLoading()
+    if not Players or not Players.LocalPlayer then return nil end
     local loading = Instance.new("TextLabel")
     loading.Size = UDim2.new(0, 200, 0, 40)
     loading.Position = UDim2.new(0.5, -100, 0.5, -20)
@@ -43,7 +50,7 @@ local function showLoading()
     loading.TextSize = 14
     loading.Font = Enum.Font.GothamBlack
     loading.TextTransparency = 1
-    loading.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    loading.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = loading
@@ -55,17 +62,27 @@ end
 -- Initialize GUI with retry mechanism
 local gui2
 local function initializeGUI()
+    if not Players or not Players.LocalPlayer then
+        showError("Invalid game context")
+        return false
+    end
     local loading = showLoading()
+    if not loading then return false end
+
     local success, result = pcall(function()
         gui2 = Instance.new("ScreenGui")
-        gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 10)
+        gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 15)
+        if not gui2.Parent then
+            gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5) -- Fallback re-parent
+        end
         gui2.ResetOnSpawn = false
         gui2.IgnoreGuiInset = true
+        gui2.Enabled = true
 
         -- Main Frame for GUI 2
         local gui2Frame = Instance.new("Frame")
         gui2Frame.Size = UDim2.new(0, 320, 0, 420)
-        gui2Frame.Position = UDim2.new(0.5, -160, -0.5, 0) -- Start off-screen for slide-in
+        gui2Frame.Position = UDim2.new(0.5, -160, -0.5, 0)
         gui2Frame.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
         gui2Frame.BackgroundTransparency = 0.1
         gui2Frame.Active = true
@@ -197,7 +214,7 @@ local function initializeGUI()
         -- Start Button (Toggles Auto-Spam)
         local startButton = Instance.new("TextButton")
         startButton.Size = UDim2.new(0, 280, 0, 50)
-        startButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50) -- Red for "Off"
+        startButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         startButton.Text = "Start Off"
         startButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         startButton.TextSize = 16
@@ -217,7 +234,7 @@ local function initializeGUI()
         local isSpamming = false
         local spamThread = nil
         local lastToggle = 0
-        local cooldown = 1 -- 1-second cooldown to prevent rapid toggling
+        local cooldown = 1
 
         startButton.MouseButton1Click:Connect(function()
             local currentTime = tick()
@@ -235,7 +252,7 @@ local function initializeGUI()
                 isSpamming = not isSpamming
                 if isSpamming then
                     startButton.Text = "Start On"
-                    startButton.BackgroundColor3 = Color3.fromRGB(0, 255, 100) -- Green for "On"
+                    startButton.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
                     spamThread = task.spawn(function()
                         while isSpamming do
                             pcall(function()
@@ -246,7 +263,7 @@ local function initializeGUI()
                     end)
                 else
                     startButton.Text = "Start Off"
-                    startButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50) -- Red for "Off"
+                    startButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
                     if spamThread then
                         task.cancel(spamThread)
                         spamThread = nil
@@ -379,7 +396,7 @@ local function initializeGUI()
 
         -- Master Elements GUI
         local masterGui = Instance.new("ScreenGui")
-        masterGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+        masterGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 15)
         masterGui.Enabled = false
         masterGui.ResetOnSpawn = false
         masterGui.IgnoreGuiInset = true
@@ -521,6 +538,7 @@ local function initializeGUI()
         end)
 
         -- Startup Animation
+        while not gui2Frame:IsDescendantOf(game) do wait(0.1) end -- Wait until GUI is in game hierarchy
         gui2Frame.BackgroundTransparency = 1
         local uiScale = Instance.new("UIScale")
         uiScale.Scale = 0.5
@@ -575,12 +593,12 @@ local function initializeGUI()
 end
 
 -- Retry GUI initialization if it fails
-local maxRetries = 3
+local maxRetries = 5
 local retryCount = 0
 local retryDelay = 1
 while not initializeGUI() and retryCount < maxRetries do
     retryCount = retryCount + 1
-    wait(retryDelay * retryCount) -- Increase delay per attempt
+    wait(retryDelay * retryCount + math.random() * 0.5) -- Add random jitter to delay
 end
 if retryCount >= maxRetries then
     showError("GUI failed to load after " .. maxRetries .. " attempts")
