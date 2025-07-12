@@ -14,7 +14,7 @@ gui2.Name = "NinjaLegendsGUI"
 
 -- Main Frame
 local gui2Frame = Instance.new("Frame")
-gui2Frame.Size = UDim2.new(0, 200, 0, 280) -- Increased height for Chi input
+gui2Frame.Size = UDim2.new(0, 200, 0, 280)
 gui2Frame.Position = UDim2.new(0.05, 0, 0.05, 0)
 gui2Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 gui2Frame.Active = true
@@ -128,13 +128,22 @@ discordCorner.Parent = discordButton
 -- Submit Functionality for Gems
 gemsSubmitButton.MouseButton1Click:Connect(function()
     local num = tonumber(gemsEntry.Text)
-    if num and num > 0 and num <= 1e100 then
-        ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", num)
-        gemsEntry.Text = "Success!"
-        wait(1)
-        gemsEntry.Text = "Enter Gems amount"
+    if num and num > 0 and num <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
+        local success, err = pcall(function()
+            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", math.floor(num))
+        end)
+        if success then
+            gemsEntry.Text = "Gems Success!"
+            wait(1)
+            gemsEntry.Text = "Enter Gems amount"
+        else
+            gemsEntry.Text = "Error: Try again!"
+            warn("Gems conversion failed: " .. tostring(err))
+            wait(1)
+            gemsEntry.Text = "Enter Gems amount"
+        end
     else
-        gemsEntry.Text = "Invalid number!"
+        gemsEntry.Text = "Invalid Gems!"
         wait(1)
         gemsEntry.Text = "Enter Gems amount"
     end
@@ -143,13 +152,22 @@ end)
 -- Submit Functionality for Chi
 chiSubmitButton.MouseButton1Click:Connect(function()
     local num = tonumber(chiEntry.Text)
-    if num and num > 0 and num <= 1e100 then
-        ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertChi", num)
-        chiEntry.Text = "Success!"
-        wait(1)
-        chiEntry.Text = "Enter Chi amount"
+    if num and num > 0 and num <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
+        local success, err = pcall(function()
+            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("addChi", math.floor(num))
+        end)
+        if success then
+            chiEntry.Text = "Chi Success!"
+            wait(1)
+            chiEntry.Text = "Enter Chi amount"
+        else
+            chiEntry.Text = "Error: Try again!"
+            warn("Chi conversion failed: " .. tostring(err))
+            wait(1)
+            chiEntry.Text = "Enter Chi amount"
+        end
     else
-        chiEntry.Text = "Invalid number!"
+        chiEntry.Text = "Invalid Chi!"
         wait(1)
         chiEntry.Text = "Enter Chi amount"
     end
@@ -227,7 +245,12 @@ for i, element in ipairs(elements) do
     buttonCorner.CornerRadius = UDim.new(0, 6)
     buttonCorner.Parent = button
     button.MouseButton1Click:Connect(function()
-        ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("elementMasteryEvent"):FireServer(element)
+        local success, err = pcall(function()
+            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("elementMasteryEvent"):FireServer(element)
+        end)
+        if not success then
+            warn("Element mastery failed for " .. element .. ": " .. tostring(err))
+        end
     end)
 end
 
