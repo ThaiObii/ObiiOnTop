@@ -2,10 +2,15 @@
 -- Credits to k00dkidd
 -- Make sure to read the usage
 
+wait(5) -- Initial delay to ensure game environment is ready
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+if not game or not TweenService or not Players or not ReplicatedStorage then
+    print("Error: Required game services unavailable")
+    return
+end
 print("Starting Ninja Legends OP GUI script") -- Debug start
 
 -- Function to display error notifications
@@ -24,7 +29,13 @@ local function showError(message)
     errorLabel.TextSize = 14
     errorLabel.Font = Enum.Font.GothamBlack
     errorLabel.TextTransparency = 1
-    errorLabel.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
+    local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
+    if playerGui then
+        errorLabel.Parent = playerGui
+    else
+        print("Error: PlayerGui not found - " .. message)
+        return
+    end
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = errorLabel
@@ -40,6 +51,8 @@ end
 -- Function to show loading indicator
 local function showLoading()
     if not Players or not Players.LocalPlayer then return nil end
+    local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
+    if not playerGui then return nil end
     local loading = Instance.new("TextLabel")
     loading.Size = UDim2.new(0, 200, 0, 40)
     loading.Position = UDim2.new(0.5, -100, 0.5, -20)
@@ -50,7 +63,7 @@ local function showLoading()
     loading.TextSize = 14
     loading.Font = Enum.Font.GothamBlack
     loading.TextTransparency = 1
-    loading.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
+    loading.Parent = playerGui
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = loading
@@ -71,9 +84,14 @@ local function initializeGUI()
 
     local success, result = pcall(function()
         gui2 = Instance.new("ScreenGui")
-        gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 15)
-        if not gui2.Parent then
+        local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui", 15)
+        if playerGui then
+            gui2.Parent = playerGui
+        else
             gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5) -- Fallback re-parent
+        end
+        if not gui2.Parent then
+            error("Failed to parent ScreenGui")
         end
         gui2.ResetOnSpawn = false
         gui2.IgnoreGuiInset = true
@@ -538,7 +556,7 @@ local function initializeGUI()
         end)
 
         -- Startup Animation
-        while not gui2Frame:IsDescendantOf(game) do wait(0.1) end -- Wait until GUI is in game hierarchy
+        while not gui2Frame:IsDescendantOf(game) do wait(0.1) end
         gui2Frame.BackgroundTransparency = 1
         local uiScale = Instance.new("UIScale")
         uiScale.Scale = 0.5
@@ -573,6 +591,12 @@ local function initializeGUI()
         end
         TweenService:Create(inputPanel, tweenInfo, {BackgroundTransparency = 0.3}):Play()
         TweenService:Create(gui2Title, tweenInfo, {BackgroundTransparency = 0.2, TextTransparency = 0}):Play()
+
+        -- Verify GUI is visible after animation
+        wait(1.5) -- Allow animation to complete
+        if not gui2Frame.Visible or gui2Frame.BackgroundTransparency > 0.5 then
+            error("GUI frame not visible after animation")
+        end
 
         -- Show Welcome Notification
         showWelcome()
