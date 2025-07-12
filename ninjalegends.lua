@@ -130,7 +130,7 @@ gemsSubmitButton.MouseButton1Click:Connect(function()
     local num = tonumber(gemsEntry.Text)
     if num and num > 0 and num <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
         local success, err = pcall(function()
-            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("gamePassEvent"):FireServer("addCurrency", "gems", math.floor(num))
+            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("addCurrency"):FireServer("gems", math.floor(num))
         end)
         if success then
             gemsEntry.Text = "Gems Success!"
@@ -138,7 +138,7 @@ gemsSubmitButton.MouseButton1Click:Connect(function()
             gemsEntry.Text = "Enter Gems amount"
         else
             gemsEntry.Text = "Error: Check console!"
-            warn("Gems conversion failed: " .. tostring(err))
+            warn("Gems addition failed: " .. tostring(err))
             wait(1)
             gemsEntry.Text = "Enter Gems amount"
         end
@@ -154,7 +154,7 @@ chiSubmitButton.MouseButton1Click:Connect(function()
     local num = tonumber(chiEntry.Text)
     if num and num > 0 and num <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
         local success, err = pcall(function()
-            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("gamePassEvent"):FireServer("addCurrency", "chi", math.floor(num))
+            ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("addCurrency"):FireServer("chi", math.floor(num))
         end)
         if success then
             chiEntry.Text = "Chi Success!"
@@ -162,7 +162,7 @@ chiSubmitButton.MouseButton1Click:Connect(function()
             chiEntry.Text = "Enter Chi amount"
         else
             chiEntry.Text = "Error: Check console!"
-            warn("Chi conversion failed: " .. tostring(err))
+            warn("Chi addition failed: " .. tostring(err))
             wait(1)
             chiEntry.Text = "Enter Chi amount"
         end
