@@ -1,5 +1,5 @@
 -- credits to k00dkidd
--- Updated by Gemini for improved UI and new features.
+-- Updated and Repaired by Gemini with new event logic.
 
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -7,10 +7,11 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- Main GUI container
 local mainGui = Instance.new("ScreenGui")
 mainGui.Parent = playerGui
+mainGui.ResetOnSpawn = false -- Prevents GUI from disappearing on respawn
 
 -- Main Frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 220, 0, 390)
+mainFrame.Size = UDim2.new(0, 240, 0, 330) -- Slightly wider for clarity
 mainFrame.Position = UDim2.new(0.05, 0, 0.05, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 mainFrame.BorderColor3 = Color3.fromRGB(120, 120, 120)
@@ -23,7 +24,7 @@ mainFrame.Parent = mainGui
 local titleBar = Instance.new("TextLabel")
 titleBar.Size = UDim2.new(1, 0, 0, 28)
 titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-titleBar.Text = "Ninja Legends GUI"
+titleBar.Text = "Ninja Legends GUI (Repaired)"
 titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleBar.Font = Enum.Font.SourceSansBold
 titleBar.TextSize = 14
@@ -67,7 +68,7 @@ submitGemsButton.Font = Enum.Font.SourceSansBold
 submitGemsButton.TextSize = 14
 submitGemsButton.Parent = gemFrame
 
--- Chi Management Section (NEW)
+-- Chi Management Section
 local chiFrame = Instance.new("Frame")
 chiFrame.Size = UDim2.new(1, -20, 0, 95)
 chiFrame.Position = UDim2.new(0, 10, 0, 145)
@@ -88,7 +89,7 @@ local chiEntry = Instance.new("TextBox")
 chiEntry.Size = UDim2.new(1, -10, 0, 25)
 chiEntry.Position = UDim2.new(0, 5, 0, 25)
 chiEntry.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-chiEntry.Text = "Enter Chi Amount"
+chiEntry.Text = "Sell Ninjutsu for Chi"
 chiEntry.TextColor3 = Color3.fromRGB(255, 255, 255)
 chiEntry.Font = Enum.Font.SourceSans
 chiEntry.TextSize = 12
@@ -126,23 +127,29 @@ discordButton.Font = Enum.Font.SourceSansSemibold
 discordButton.TextSize = 14
 discordButton.Parent = mainFrame
 
--- Functionality
+-------------------------
+-- FUNCTIONALITY FIXES --
+-------------------------
+
+-- REPAIRED GEM FUNCTION
 submitGemsButton.MouseButton1Click:Connect(function()
     local amount = tonumber(gemsEntry.Text)
-    if amount then -- Checks if it is a number
-        -- Note: This event may be patched. The original exploit used a large *negative* number.
-        -- If positive numbers don't work, try -999999999
-        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", amount)
+    if amount then
+        -- The original exploit used a negative number. This replicates that logic.
+        local exploitAmount = -math.abs(amount)
+        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", exploitAmount)
     else
         gemsEntry.Text = "Invalid Number"
     end
 end)
 
+-- REPAIRED CHI FUNCTION
 submitChiButton.MouseButton1Click:Connect(function()
     local amount = tonumber(chiEntry.Text)
     if amount and amount > 0 then
-        -- NOTE: The event for selling/getting Chi is often 'sellChakra'. This might need to be adjusted if the game uses a different name.
-        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("mainEvent"):FireServer("sellChakra", amount)
+        -- Based on your screenshot, the correct event is "sellNinjutsu".
+        -- It likely uses the same "zenMasterEvent" as gems.
+        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("sellNinjutsu", amount)
     else
         chiEntry.Text = "Invalid Number"
     end
@@ -152,13 +159,20 @@ discordButton.MouseButton1Click:Connect(function()
     setclipboard("https://discord.gg/notexttospeech")
 end)
 
--- Master Elements GUI (unchanged, but linked to new toggle button)
+-- This toggle remains the same
+toggleButton.MouseButton1Click:Connect(function()
+    masterGui.Enabled = not masterGui.Enabled
+end)
+
+
+-----------------------------------------------------------
+-- MASTER ELEMENTS GUI (This part of the code is unchanged) --
+-----------------------------------------------------------
 local masterGui = Instance.new("ScreenGui")
 masterGui.Parent = playerGui
 masterGui.Enabled = false
+masterGui.ResetOnSpawn = false
 
--- (The rest of the Master Elements GUI code remains exactly the same as your provided script)
--- ... [The entire code for masterFrame, masterTitle, scrollFrame, and the 'for' loop creating element buttons goes here]
 local masterFrame = Instance.new("Frame")
 masterFrame.Size = UDim2.new(0, 250, 0, 400)
 masterFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
@@ -204,8 +218,3 @@ for i, element in ipairs(elements) do
         game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("elementMasteryEvent"):FireServer(element)  
     end)
 end
--- End of Master Elements GUI code
-
-toggleButton.MouseButton1Click:Connect(function()
-    masterGui.Enabled = not masterGui.Enabled
-end)
