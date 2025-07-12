@@ -1,4 +1,5 @@
--- credits to k00dkidd
+-- Ninja Legends OP GUI
+-- Credits to k00dkidd
 -- Updated and Repaired by Gemini with new event logic.
 
 local player = game.Players.LocalPlayer
@@ -89,7 +90,7 @@ local chiEntry = Instance.new("TextBox")
 chiEntry.Size = UDim2.new(1, -10, 0, 25)
 chiEntry.Position = UDim2.new(0, 5, 0, 25)
 chiEntry.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-chiEntry.Text = "Sell Ninjutsu for Chi"
+chiEntry.Text = "Enter Chi Amount"
 chiEntry.TextColor3 = Color3.fromRGB(255, 255, 255)
 chiEntry.Font = Enum.Font.SourceSans
 chiEntry.TextSize = 12
@@ -131,27 +132,51 @@ discordButton.Parent = mainFrame
 -- FUNCTIONALITY FIXES --
 -------------------------
 
--- REPAIRED GEM FUNCTION
+-- FIXED GEM FUNCTION
 submitGemsButton.MouseButton1Click:Connect(function()
     local amount = tonumber(gemsEntry.Text)
-    if amount then
-        -- The original exploit used a negative number. This replicates that logic.
-        local exploitAmount = -math.abs(amount)
-        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", exploitAmount)
+    if amount and amount > 0 and amount <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
+        local success, err = pcall(function()
+            game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("addCurrency"):FireServer("gems", math.floor(amount))
+        end)
+        if success then
+            gemsEntry.Text = "Gems Added!"
+            wait(1)
+            gemsEntry.Text = "Enter Gem Amount"
+        else
+            gemsEntry.Text = "Error: Check console!"
+            warn("Gems addition failed: " .. tostring(err))
+            wait(1)
+            gemsEntry.Text = "Enter Gem Amount"
+        end
     else
-        gemsEntry.Text = "Invalid Number"
+        gemsEntry.Text = "Invalid Amount!"
+        wait(1)
+        gemsEntry.Text = "Enter Gem Amount"
     end
 end)
 
--- REPAIRED CHI FUNCTION
+-- FIXED CHI FUNCTION
 submitChiButton.MouseButton1Click:Connect(function()
     local amount = tonumber(chiEntry.Text)
-    if amount and amount > 0 then
-        -- Based on your screenshot, the correct event is "sellNinjutsu".
-        -- It likely uses the same "zenMasterEvent" as gems.
-        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("sellNinjutsu", amount)
+    if amount and amount > 0 and amount <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
+        local success, err = pcall(function()
+            game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("addCurrency"):FireServer("chi", math.floor(amount))
+        end)
+        if success then
+            chiEntry.Text = "Chi Added!"
+            wait(1)
+            chiEntry.Text = "Enter Chi Amount"
+        else
+            chiEntry.Text = "Error: Check console!"
+            warn("Chi addition failed: " .. tostring(err))
+            wait(1)
+            chiEntry.Text = "Enter Chi Amount"
+        end
     else
-        chiEntry.Text = "Invalid Number"
+        chiEntry.Text = "Invalid Amount!"
+        wait(1)
+        chiEntry.Text = "Enter Chi Amount"
     end
 end)
 
@@ -163,7 +188,6 @@ end)
 toggleButton.MouseButton1Click:Connect(function()
     masterGui.Enabled = not masterGui.Enabled
 end)
-
 
 -----------------------------------------------------------
 -- MASTER ELEMENTS GUI (This part of the code is unchanged) --
