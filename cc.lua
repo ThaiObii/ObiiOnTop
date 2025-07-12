@@ -28,22 +28,45 @@ local function showError(message)
     TweenService:Create(errorLabel, tweenInfo, {TextTransparency = 1, BackgroundTransparency = 1}):Play()
     wait(0.5)
     errorLabel:Destroy()
+    print("Error: " .. message) -- Debug print for executor console
+end
+
+-- Function to show loading indicator
+local function showLoading()
+    local loading = Instance.new("TextLabel")
+    loading.Size = UDim2.new(0, 200, 0, 40)
+    loading.Position = UDim2.new(0.5, -100, 0.5, -20)
+    loading.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
+    loading.BackgroundTransparency = 0.3
+    loading.Text = "Loading GUI..."
+    loading.TextColor3 = Color3.fromRGB(0, 150, 255)
+    loading.TextSize = 14
+    loading.Font = Enum.Font.GothamBlack
+    loading.TextTransparency = 1
+    loading.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = loading
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+    TweenService:Create(loading, tweenInfo, {TextTransparency = 0, BackgroundTransparency = 0.1}):Play()
+    return loading
 end
 
 -- Initialize GUI with retry mechanism
 local gui2
 local function initializeGUI()
+    local loading = showLoading()
     local success, result = pcall(function()
         gui2 = Instance.new("ScreenGui")
-        gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 5)
+        gui2.Parent = Players.LocalPlayer:WaitForChild("PlayerGui", 10)
         gui2.ResetOnSpawn = false
         gui2.IgnoreGuiInset = true
 
         -- Main Frame for GUI 2
         local gui2Frame = Instance.new("Frame")
-        gui2Frame.Size = UDim2.new(0, 300, 0, 400)
-        gui2Frame.Position = UDim2.new(0.5, -150, -0.5, 0) -- Start off-screen for slide-in
-        gui2Frame.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+        gui2Frame.Size = UDim2.new(0, 320, 0, 420)
+        gui2Frame.Position = UDim2.new(0.5, -160, -0.5, 0) -- Start off-screen for slide-in
+        gui2Frame.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
         gui2Frame.BackgroundTransparency = 0.1
         gui2Frame.Active = true
         gui2Frame.Draggable = true
@@ -54,7 +77,7 @@ local function initializeGUI()
         gui2Corner.Parent = gui2Frame
 
         local gui2Stroke = Instance.new("UIStroke")
-        gui2Stroke.Color = Color3.fromRGB(0, 255, 100)
+        gui2Stroke.Color = Color3.fromRGB(0, 150, 255)
         gui2Stroke.Thickness = 2
         gui2Stroke.Parent = gui2Frame
 
@@ -65,10 +88,10 @@ local function initializeGUI()
         -- Title
         local gui2Title = Instance.new("TextLabel")
         gui2Title.Size = UDim2.new(1, 0, 0, 60)
-        gui2Title.BackgroundColor3 = Color3.fromRGB(50, 0, 100)
+        gui2Title.BackgroundColor3 = Color3.fromRGB(0, 80, 100)
         gui2Title.BackgroundTransparency = 0.2
         gui2Title.Text = "Ninja Legends OP GUI"
-        gui2Title.TextColor3 = Color3.fromRGB(0, 255, 100)
+        gui2Title.TextColor3 = Color3.fromRGB(0, 150, 255)
         gui2Title.TextSize = 20
         gui2Title.Font = Enum.Font.GothamBlack
         gui2Title.Parent = gui2Frame
@@ -78,7 +101,7 @@ local function initializeGUI()
         titleCorner.Parent = gui2Title
 
         local titleStroke = Instance.new("UIStroke")
-        titleStroke.Color = Color3.fromRGB(0, 255, 100)
+        titleStroke.Color = Color3.fromRGB(0, 150, 255)
         titleStroke.Thickness = 1
         titleStroke.Parent = gui2Title
 
@@ -87,10 +110,10 @@ local function initializeGUI()
             local welcome = Instance.new("TextLabel")
             welcome.Size = UDim2.new(0, 400, 0, 80)
             welcome.Position = UDim2.new(0.5, -200, 1, 0)
-            welcome.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+            welcome.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
             welcome.BackgroundTransparency = 0.3
             welcome.Text = "Welcome to Ninja Legends OP GUI by k00dkidd!"
-            welcome.TextColor3 = Color3.fromRGB(0, 255, 100)
+            welcome.TextColor3 = Color3.fromRGB(0, 150, 255)
             welcome.TextSize = 16
             welcome.Font = Enum.Font.GothamBlack
             welcome.TextTransparency = 1
@@ -101,7 +124,7 @@ local function initializeGUI()
             welcomeCorner.Parent = welcome
 
             local welcomeStroke = Instance.new("UIStroke")
-            welcomeStroke.Color = Color3.fromRGB(0, 255, 100)
+            welcomeStroke.Color = Color3.fromRGB(0, 150, 255)
             welcomeStroke.Thickness = 2
             welcomeStroke.Parent = welcome
 
@@ -120,16 +143,16 @@ local function initializeGUI()
             local uiScale = Instance.new("UIScale")
             uiScale.Parent = button
             local stroke = Instance.new("UIStroke")
-            stroke.Color = Color3.fromRGB(0, 255, 100)
+            stroke.Color = Color3.fromRGB(0, 150, 255)
             stroke.Thickness = 1
             stroke.Parent = button
             button.MouseEnter:Connect(function()
                 TweenService:Create(uiScale, TweenInfo.new(0.2), {Scale = 1.05}):Play()
-                TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(100, 255, 150)}):Play()
+                TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(100, 200, 255)}):Play()
             end)
             button.MouseLeave:Connect(function()
                 TweenService:Create(uiScale, TweenInfo.new(0.2), {Scale = 1}):Play()
-                TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 255, 100)}):Play()
+                TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 150, 255)}):Play()
             end)
             button.MouseButton1Down:Connect(function()
                 TweenService:Create(uiScale, TweenInfo.new(0.1), {Scale = 0.95}):Play()
@@ -141,7 +164,7 @@ local function initializeGUI()
 
         -- Button Container with List Layout
         local buttonContainer = Instance.new("Frame")
-        buttonContainer.Size = UDim2.new(1, -20, 0, 200)
+        buttonContainer.Size = UDim2.new(1, -20, 0, 220)
         buttonContainer.Position = UDim2.new(0, 10, 0, 70)
         buttonContainer.BackgroundTransparency = 1
         buttonContainer.Parent = gui2Frame
@@ -153,10 +176,10 @@ local function initializeGUI()
 
         -- Toggle Master Elements GUI Button
         local toggleButton = Instance.new("TextButton")
-        toggleButton.Size = UDim2.new(0, 260, 0, 45)
-        toggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        toggleButton.Size = UDim2.new(0, 280, 0, 50)
+        toggleButton.BackgroundColor3 = Color3.fromRGB(0, 60, 80)
         toggleButton.Text = "Master Elements"
-        toggleButton.TextColor3 = Color3.fromRGB(0, 255, 100)
+        toggleButton.TextColor3 = Color3.fromRGB(0, 150, 255)
         toggleButton.TextSize = 16
         toggleButton.Font = Enum.Font.GothamBlack
         toggleButton.Parent = buttonContainer
@@ -165,15 +188,15 @@ local function initializeGUI()
         toggleCorner.Parent = toggleButton
         local toggleGradient = Instance.new("UIGradient")
         toggleGradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 100)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 0, 100))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 100))
         }
         toggleGradient.Parent = toggleButton
         applyButtonEffects(toggleButton)
 
         -- Start Button (Toggles Auto-Spam)
         local startButton = Instance.new("TextButton")
-        startButton.Size = UDim2.new(0, 260, 0, 45)
+        startButton.Size = UDim2.new(0, 280, 0, 50)
         startButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50) -- Red for "Off"
         startButton.Text = "Start Off"
         startButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -185,18 +208,29 @@ local function initializeGUI()
         startCorner.Parent = startButton
         local startGradient = Instance.new("UIGradient")
         startGradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 100)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 0, 100))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 100))
         }
         startGradient.Parent = startButton
         applyButtonEffects(startButton)
 
         local isSpamming = false
         local spamThread = nil
+        local lastToggle = 0
+        local cooldown = 1 -- 1-second cooldown to prevent rapid toggling
 
         startButton.MouseButton1Click:Connect(function()
+            local currentTime = tick()
+            if currentTime - lastToggle < cooldown then
+                numberEntry.Text = "Wait " .. math.ceil(cooldown - (currentTime - lastToggle)) .. "s"
+                wait(1)
+                numberEntry.Text = "Enter number"
+                return
+            end
+            lastToggle = currentTime
+
             local num = tonumber(numberEntry.Text)
-            if num and num > 0 then
+            if num and num > 0 and num <= 1e50 then
                 num = math.clamp(num, 1, 1e50)
                 isSpamming = not isSpamming
                 if isSpamming then
@@ -228,25 +262,25 @@ local function initializeGUI()
         -- Input Panel
         local inputPanel = Instance.new("Frame")
         inputPanel.Size = UDim2.new(1, -20, 0, 100)
-        inputPanel.Position = UDim2.new(0, 10, 0, 280)
-        inputPanel.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+        inputPanel.Position = UDim2.new(0, 10, 0, 300)
+        inputPanel.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
         inputPanel.BackgroundTransparency = 0.3
         inputPanel.Parent = gui2Frame
         local inputCorner = Instance.new("UICorner")
         inputCorner.CornerRadius = UDim.new(0, 10)
         inputCorner.Parent = inputPanel
         local inputStroke = Instance.new("UIStroke")
-        inputStroke.Color = Color3.fromRGB(0, 255, 100)
+        inputStroke.Color = Color3.fromRGB(0, 150, 255)
         inputStroke.Thickness = 1
         inputStroke.Parent = inputPanel
 
         -- ENTRY FIELD (Number Input)
         local numberEntry = Instance.new("TextBox")
-        numberEntry.Size = UDim2.new(0, 260, 0, 45)
+        numberEntry.Size = UDim2.new(0, 280, 0, 50)
         numberEntry.Position = UDim2.new(0, 10, 0, 10)
-        numberEntry.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        numberEntry.BackgroundColor3 = Color3.fromRGB(0, 60, 80)
         numberEntry.Text = "Enter number"
-        numberEntry.TextColor3 = Color3.fromRGB(0, 255, 100)
+        numberEntry.TextColor3 = Color3.fromRGB(0, 150, 255)
         numberEntry.TextSize = 16
         numberEntry.Font = Enum.Font.GothamBlack
         numberEntry.ClearTextOnFocus = true
@@ -255,17 +289,17 @@ local function initializeGUI()
         entryCorner.CornerRadius = UDim.new(0, 10)
         entryCorner.Parent = numberEntry
         local entryStroke = Instance.new("UIStroke")
-        entryStroke.Color = Color3.fromRGB(0, 255, 100)
+        entryStroke.Color = Color3.fromRGB(0, 150, 255)
         entryStroke.Thickness = 1
         entryStroke.Parent = numberEntry
 
         -- SUBMIT BUTTON
         local submitButton = Instance.new("TextButton")
-        submitButton.Size = UDim2.new(0, 260, 0, 45)
-        submitButton.Position = UDim2.new(0, 10, 0, 55)
-        submitButton.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        submitButton.Size = UDim2.new(0, 280, 0, 50)
+        submitButton.Position = UDim2.new(0, 10, 0, 60)
+        submitButton.BackgroundColor3 = Color3.fromRGB(0, 60, 80)
         submitButton.Text = "Submit"
-        submitButton.TextColor3 = Color3.fromRGB(0, 255, 100)
+        submitButton.TextColor3 = Color3.fromRGB(0, 150, 255)
         submitButton.TextSize = 16
         submitButton.Font = Enum.Font.GothamBlack
         submitButton.Parent = inputPanel
@@ -274,15 +308,15 @@ local function initializeGUI()
         submitCorner.Parent = submitButton
         local submitGradient = Instance.new("UIGradient")
         submitGradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 100)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 0, 100))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 100))
         }
         submitGradient.Parent = submitButton
         applyButtonEffects(submitButton)
 
         submitButton.MouseButton1Click:Connect(function()
             local num = tonumber(numberEntry.Text)
-            if num and num > 0 then
+            if num and num > 0 and num <= 1e50 then
                 num = math.clamp(num, 1, 1e50)
                 pcall(function()
                     ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", num)
@@ -299,7 +333,7 @@ local function initializeGUI()
 
         -- Discord Button
         local discordButton = Instance.new("TextButton")
-        discordButton.Size = UDim2.new(0, 260, 0, 45)
+        discordButton.Size = UDim2.new(0, 280, 0, 50)
         discordButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
         discordButton.Text = "Join Discord"
         discordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -322,12 +356,12 @@ local function initializeGUI()
                 setclipboard("https://discord.gg/notexttospeech")
             end)
             local notify = Instance.new("TextLabel")
-            notify.Size = UDim2.new(0, 260, 0, 45)
-            notify.Position = UDim2.new(0.5, -130, 0.4, 0)
-            notify.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+            notify.Size = UDim2.new(0, 280, 0, 50)
+            notify.Position = UDim2.new(0.5, -140, 0.4, 0)
+            notify.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
             notify.BackgroundTransparency = 0.3
             notify.Text = "Discord link copied!"
-            notify.TextColor3 = Color3.fromRGB(0, 255, 100)
+            notify.TextColor3 = Color3.fromRGB(0, 150, 255)
             notify.TextSize = 16
             notify.Font = Enum.Font.GothamBlack
             notify.TextTransparency = 1
@@ -351,9 +385,9 @@ local function initializeGUI()
         masterGui.IgnoreGuiInset = true
 
         local masterFrame = Instance.new("Frame")
-        masterFrame.Size = UDim2.new(0, 350, 0, 550)
-        masterFrame.Position = UDim2.new(0.5, -175, 0.2, 0)
-        masterFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+        masterFrame.Size = UDim2.new(0, 370, 0, 570)
+        masterFrame.Position = UDim2.new(0.5, -185, 0.2, 0)
+        masterFrame.BackgroundColor3 = Color3.fromRGB(0, 40, 60)
         masterFrame.BackgroundTransparency = 0.1
         masterFrame.Active = true
         masterFrame.Draggable = true
@@ -364,17 +398,17 @@ local function initializeGUI()
         masterCorner.Parent = masterFrame
 
         local masterStroke = Instance.new("UIStroke")
-        masterStroke.Color = Color3.fromRGB(0, 255, 100)
+        masterStroke.Color = Color3.fromRGB(0, 150, 255)
         masterStroke.Thickness = 2
         masterStroke.Parent = masterFrame
         TweenService:Create(masterStroke, pulseInfo, {Thickness = 4}):Play()
 
         local masterTitle = Instance.new("TextLabel")
         masterTitle.Size = UDim2.new(1, -50, 0, 60)
-        masterTitle.BackgroundColor3 = Color3.fromRGB(50, 0, 100)
+        masterTitle.BackgroundColor3 = Color3.fromRGB(0, 80, 100)
         masterTitle.BackgroundTransparency = 0.2
         masterTitle.Text = "Master Elements"
-        masterTitle.TextColor3 = Color3.fromRGB(0, 255, 100)
+        masterTitle.TextColor3 = Color3.fromRGB(0, 150, 255)
         masterTitle.TextSize = 20
         masterTitle.Font = Enum.Font.GothamBlack
         masterTitle.Parent = masterFrame
@@ -382,7 +416,7 @@ local function initializeGUI()
         masterTitleCorner.CornerRadius = UDim.new(0, 15)
         masterTitleCorner.Parent = masterTitle
         local masterTitleStroke = Instance.new("UIStroke")
-        masterTitleStroke.Color = Color3.fromRGB(0, 255, 100)
+        masterTitleStroke.Color = Color3.fromRGB(0, 150, 255)
         masterTitleStroke.Thickness = 1
         masterTitleStroke.Parent = masterTitle
 
@@ -408,7 +442,7 @@ local function initializeGUI()
         local scrollFrame = Instance.new("ScrollingFrame")
         scrollFrame.Size = UDim2.new(1, -20, 1, -80)
         scrollFrame.Position = UDim2.new(0, 10, 0, 70)
-        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 550)
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 570)
         scrollFrame.ScrollBarThickness = 5
         scrollFrame.BackgroundTransparency = 1
         scrollFrame.Parent = masterFrame
@@ -434,10 +468,10 @@ local function initializeGUI()
         -- Create Buttons Inside Scroll Frame
         for i, element in ipairs(elements) do
             local button = Instance.new("TextButton")
-            button.Size = UDim2.new(0, 310, 0, 50)
-            button.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+            button.Size = UDim2.new(0, 330, 0, 55)
+            button.BackgroundColor3 = Color3.fromRGB(0, 60, 80)
             button.Text = "Master " .. element
-            button.TextColor3 = Color3.fromRGB(0, 255, 100)
+            button.TextColor3 = Color3.fromRGB(0, 150, 255)
             button.TextSize = 16
             button.Font = Enum.Font.GothamBlack
             button.Parent = scrollFrame
@@ -446,8 +480,8 @@ local function initializeGUI()
             buttonCorner.Parent = button
             local buttonGradient = Instance.new("UIGradient")
             buttonGradient.Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 100)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 0, 100))
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 100))
             }
             buttonGradient.Parent = button
             applyButtonEffects(button)
@@ -460,7 +494,7 @@ local function initializeGUI()
         end
 
         -- Update CanvasSize based on number of elements
-        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #elements * 62)
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #elements * 67)
 
         -- Toggle Function for Master Elements GUI
         toggleButton.MouseButton1Click:Connect(function()
@@ -505,7 +539,7 @@ local function initializeGUI()
         end
         local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
         local slideInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-        TweenService:Create(gui2Frame, slideInfo, {Position = UDim2.new(0.5, -150, 0.2, 0)}):Play()
+        TweenService:Create(gui2Frame, slideInfo, {Position = UDim2.new(0.5, -160, 0.2, 0)}):Play()
         TweenService:Create(gui2Frame, tweenInfo, {BackgroundTransparency = 0.1}):Play()
         TweenService:Create(uiScale, slideInfo, {Scale = 1}):Play()
         for i, child in ipairs(buttonContainer:GetChildren()) do
@@ -526,6 +560,13 @@ local function initializeGUI()
         showWelcome()
     end)
 
+    if loading then
+        local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+        TweenService:Create(loading, tweenInfo, {TextTransparency = 1, BackgroundTransparency = 1}):Play()
+        wait(0.5)
+        loading:Destroy()
+    end
+
     if not success then
         showError("Failed to initialize GUI: " .. tostring(result))
         return false
@@ -536,9 +577,10 @@ end
 -- Retry GUI initialization if it fails
 local maxRetries = 3
 local retryCount = 0
+local retryDelay = 1
 while not initializeGUI() and retryCount < maxRetries do
     retryCount = retryCount + 1
-    wait(1)
+    wait(retryDelay * retryCount) -- Increase delay per attempt
 end
 if retryCount >= maxRetries then
     showError("GUI failed to load after " .. maxRetries .. " attempts")
